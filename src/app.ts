@@ -1,9 +1,20 @@
 import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import { Pool } from "pg";
+import cors from 'cors';
+
 
 dotenv.config(); //Reads .env file and makes it accessible via process.env
 const app = express();
+app.use(express.json());
+
+const allowedOrigins = ['http://localhost:3000'];
+
+const options: cors.CorsOptions = {
+    origin: allowedOrigins
+};
+
+app.use(cors(options))
 
 const pool = new Pool({
     host: process.env.DB_HOST,
@@ -24,6 +35,11 @@ connectToDB();
 
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
     res.send("hi");
+});
+
+app.post('/create-drop', (req: Request, res:Response, next:NextFunction) => {
+    res.send("in req")
+    console.log(req.body)
 });
 
 app.listen(process.env.PORT, () => {
